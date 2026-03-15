@@ -1,69 +1,102 @@
-import React from "react";
-import { FiPieChart, FiUsers, FiSettings } from "react-icons/fi";
+import React, { useState } from "react";
+import { FiPieChart, FiUsers, FiSettings, FiMenu } from "react-icons/fi";
 
 export default function DashboardLayout({ children }) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
-    <div className="flex min-h-screen font-sans bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900 overflow-x-hidden">
 
       {/* Sidebar */}
-      <aside className="w-64 bg-gradient-to-b from-indigo-800 to-purple-800 text-white flex flex-col shadow-2xl">
-        <div className="p-6 border-b border-indigo-700">
-          <h1 className="text-3xl font-extrabold tracking-tight drop-shadow-lg">
-            Call Analytics
-          </h1>
+      <aside
+        className={`
+          fixed inset-y-0 left-0 z-50 w-64
+          bg-gradient-to-b from-indigo-800 to-purple-800
+          text-white flex flex-col shadow-2xl
+          transform transition-transform duration-300
+          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+          lg:translate-x-0 lg:static
+        `}
+      >
+        {/* Sidebar Header */}
+        <div className="p-6 border-b border-indigo-700 flex justify-between items-center">
+          <h1 className="text-xl sm:text-2xl font-bold">Call Analytics</h1>
+
+          <button
+            className="lg:hidden text-white text-xl"
+            onClick={() => setSidebarOpen(false)}
+          >
+            ✕
+          </button>
         </div>
 
-        <nav className="flex flex-col mt-6 gap-2 px-4">
-          <a
-            href="#"
-            className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-indigo-700 transition-all duration-300 shadow hover:shadow-lg"
-          >
-            <FiPieChart className="w-6 h-6" />
-            <span className="font-semibold text-lg">Dashboard</span>
-          </a>
-
-          <a
-            href="#"
-            className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-indigo-700 transition-all duration-300 shadow hover:shadow-lg"
-          >
-            <FiUsers className="w-6 h-6" />
-            <span className="font-semibold text-lg">Users</span>
-          </a>
-
-          <a
-            href="#"
-            className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-indigo-700 transition-all duration-300 shadow hover:shadow-lg"
-          >
-            <FiSettings className="w-6 h-6" />
-            <span className="font-semibold text-lg">Settings</span>
-          </a>
+        {/* Navigation */}
+        <nav className="flex flex-col gap-2 mt-6 px-4">
+          {[
+            { icon: <FiPieChart />, label: "Dashboard" },
+            { icon: <FiUsers />, label: "Users" },
+            { icon: <FiSettings />, label: "Settings" },
+          ].map((item, idx) => (
+            <a
+              key={idx}
+              href="#"
+              className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-indigo-700 transition"
+            >
+              {item.icon}
+              <span>{item.label}</span>
+            </a>
+          ))}
         </nav>
 
-        <div className="mt-auto p-4 text-sm text-indigo-200 italic">
+        <div className="mt-auto p-4 text-xs text-indigo-200">
           © 2026 Call Analytics
         </div>
       </aside>
 
+      {/* Overlay for Mobile */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden bg-gray-100 dark:bg-gray-900">
+      <div className="flex flex-col flex-1 min-h-screen min-w-0">
+
         {/* Header */}
-        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4 flex justify-between items-center shadow-md rounded-b-2xl">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">
-            Dashboard
-          </h2>
+        <header className="flex items-center justify-between bg-white dark:bg-gray-800 border-b px-4 sm:px-6 py-4 shadow-sm">
+
           <div className="flex items-center gap-4">
-            <span className="text-gray-700 dark:text-gray-300 font-medium">Admin</span>
-            <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex justify-center items-center text-white font-bold shadow-xl hover:scale-105 transition-transform duration-300">
+            <button
+              className="lg:hidden"
+              onClick={() => setSidebarOpen(true)}
+            >
+              <FiMenu className="w-6 h-6" />
+            </button>
+
+            <h2 className="text-lg sm:text-xl md:text-2xl font-bold">
+              Dashboard
+            </h2>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <span className="text-sm sm:text-base">Admin</span>
+
+            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-gradient-to-tr from-indigo-500 to-pink-500 flex items-center justify-center text-white font-bold">
               A
             </div>
           </div>
+
         </header>
 
-        {/* Content */}
-        <main className="p-8 flex-1 overflow-auto space-y-10">
+        {/* Page Content */}
+        <main className="flex-1 p-4 sm:p-6 md:p-8 space-y-6 overflow-y-auto">
           {children}
         </main>
+
       </div>
+
     </div>
   );
 }

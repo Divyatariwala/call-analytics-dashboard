@@ -9,12 +9,10 @@ import {
 } from "@/components/ui/table";
 
 export default function RecentCallsTable({ calls = [] }) {
-  // Hooks must always be called
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
 
-  // Filter calls
   const filteredCalls = useMemo(() => {
     if (!search) return calls;
     return calls.filter(c =>
@@ -24,7 +22,6 @@ export default function RecentCallsTable({ calls = [] }) {
     );
   }, [calls, search]);
 
-  // Pagination
   const totalPages = Math.ceil(filteredCalls.length / rowsPerPage);
   const paginatedCalls = filteredCalls.slice(
     (currentPage - 1) * rowsPerPage,
@@ -36,12 +33,10 @@ export default function RecentCallsTable({ calls = [] }) {
     setCurrentPage(page);
   };
 
-  // Render
   if (!calls.length) return <p className="text-center">Loading...</p>;
 
   return (
-    <div className="w-full">
-      {/* Search / Filter */}
+    <div className="w-full overflow-x-auto">
       <div className="mb-4 flex justify-between items-center">
         <input
           type="text"
@@ -55,7 +50,7 @@ export default function RecentCallsTable({ calls = [] }) {
         />
       </div>
 
-      <Table>
+      <Table className="w-full min-w-[700px]">
         <TableHeader>
           <TableRow>
             <TableHead>Caller</TableHead>
@@ -83,8 +78,8 @@ export default function RecentCallsTable({ calls = [] }) {
         </TableBody>
       </Table>
 
-      {/* Pagination Controls */}
-      <div className="mt-4 flex justify-center items-center space-x-2">
+      {/* Pagination */}
+      <div className="mt-4 flex justify-center items-center space-x-2 flex-wrap">
         <button
           className="px-3 py-1 border rounded disabled:opacity-50"
           onClick={() => goToPage(currentPage - 1)}
@@ -96,9 +91,7 @@ export default function RecentCallsTable({ calls = [] }) {
         {[...Array(totalPages)].map((_, i) => (
           <button
             key={i}
-            className={`px-3 py-1 border rounded ${
-              currentPage === i + 1 ? "bg-indigo-500 text-white" : ""
-            }`}
+            className={`px-3 py-1 border rounded ${currentPage === i + 1 ? "bg-indigo-500 text-white" : ""}`}
             onClick={() => goToPage(i + 1)}
           >
             {i + 1}

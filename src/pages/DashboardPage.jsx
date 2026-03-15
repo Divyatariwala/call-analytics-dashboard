@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import KPICards from "@/components/dashboard/KPICards";
 
 import { fetchCalls } from "@/services/api";
 import {
   calculateKPIs,
   getCallsPerHour,
-  getCallsByCity,
   getCallDurationStats,
-  getCostByCity
+  getCostByCity,
+  getCallsByCity
 } from "@/utils/analytics";
 
 import DurationChart from "@/components/dashboard/DurationChart";
@@ -16,8 +17,6 @@ import ActivityTimeline from "@/components/dashboard/ActivityTimeline";
 import CallsByCity from "@/components/dashboard/CallsByCity";
 import RecentCallsTable from "@/components/dashboard/RecentCallsTable";
 
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-
 export default function DashboardPage() {
   const [calls, setCalls] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,14 +24,14 @@ export default function DashboardPage() {
   useEffect(() => {
     fetchCalls()
       .then((data) => setCalls(data))
-      .catch((err) => console.error(err))
+      .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
 
   if (loading) {
     return (
       <DashboardLayout>
-        <div className="flex justify-center items-center min-h-screen text-gray-500 text-lg">
+        <div className="flex items-center justify-center min-h-[60vh] text-gray-500">
           Loading calls...
         </div>
       </DashboardLayout>
@@ -45,81 +44,50 @@ export default function DashboardPage() {
   const timelineData = getCallsPerHour(calls);
   const cityData = getCallsByCity(calls);
 
-  const kpiCards = [
-    { label: "Total Calls", value: kpis.totalCalls, color: "bg-indigo-500" },
-    { label: "Total Cost ($)", value: `$${kpis.totalCost}`, color: "bg-green-500" },
-    { label: "Avg Duration (s)", value: kpis.avgDuration, color: "bg-yellow-500" },
-    { label: "Successful Calls", value: kpis.successfulCalls, color: "bg-teal-500" },
-    { label: "Failed Calls", value: kpis.failedCalls, color: "bg-red-500" },
-  ];
-
   return (
     <DashboardLayout>
+
       {/* KPI Cards */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-        {kpiCards.map((kpi, idx) => (
-          <div
-            key={idx}
-            className={`flex flex-col justify-center items-center p-6 rounded-xl shadow-xl text-white ${kpi.color} hover:shadow-2xl hover:scale-105 transition-all duration-300`}
-          >
-            <span className="text-sm uppercase opacity-80">{kpi.label}</span>
-            <span className="text-2xl font-bold mt-2">{kpi.value}</span>
-          </div>
-        ))}
+      <section>
+        <KPICards kpis={kpis} />
       </section>
 
       {/* Charts */}
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        <Card className="shadow-xl rounded-xl hover:shadow-2xl transition-shadow flex flex-col">
-          <CardHeader>
-            <CardTitle>Call Duration Analytics</CardTitle>
-          </CardHeader>
-          <CardContent className="flex-1">
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-4 sm:p-6">
+          <div className="h-[260px] sm:h-[300px] md:h-[340px]">
             <DurationChart data={durationStats} />
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        <Card className="shadow-xl rounded-xl hover:shadow-2xl transition-shadow flex flex-col">
-          <CardHeader>
-            <CardTitle>Calls by City</CardTitle>
-          </CardHeader>
-          <CardContent className="flex-1  flex justify-center items-center">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-4 sm:p-6">
+          <div className=" sm:h-[300px] md:h-[340px]">
             <CallsByCity data={cityData} />
-          </CardContent>
-        </Card>
+          </div>
+        </div>
+
       </section>
 
-        <Card className="shadow-xl rounded-xl hover:shadow-2xl transition-shadow flex flex-col">
-          <CardHeader>
-            <CardTitle>Call Activity Timeline</CardTitle>
-          </CardHeader>
-          <CardContent className="flex-1 ">
-            <ActivityTimeline data={timelineData} />
-          </CardContent>
-        </Card>
-
-      <section className="grid grid-cols-1 gap-6 mt-6">
-        <Card className="shadow-xl rounded-xl hover:shadow-2xl transition-shadow flex flex-col">
-          <CardHeader>
-            <CardTitle>Call Cost Analytics</CardTitle>
-          </CardHeader>
-          <CardContent className="flex-1">
-            <CostChart data={costData} />
-          </CardContent>
-        </Card>
+      {/* Timeline */}
+      <section className="bg-white dark:bg-gray-800 rounded-xl shadow p-4 sm:p-6">
+        <div className="sm:h-[320px] md:h-[360px]">
+          <ActivityTimeline data={timelineData} />
+        </div>
       </section>
 
-      {/* Recent Calls Table */}
-      <section className="mt-6">
-        <Card className="shadow-xl rounded-xl hover:shadow-2xl transition-shadow">
-          <CardHeader>
-            <CardTitle>Recent Call Logs</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RecentCallsTable calls={calls} />
-          </CardContent>
-        </Card>
+      {/* Cost Chart */}
+      <section className="bg-white dark:bg-gray-800 rounded-xl shadow p-4 sm:p-6">
+        <div className=" sm:h-[320px] md:h-[360px]">
+          <CostChart data={costData} />
+        </div>
       </section>
+
+      {/* Table */}
+      <section className="bg-white dark:bg-gray-800 rounded-xl shadow p-4 sm:p-6 overflow-x-auto">
+        <RecentCallsTable calls={calls} />
+      </section>
+
     </DashboardLayout>
   );
 }
