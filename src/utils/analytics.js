@@ -3,9 +3,13 @@ export const calculateKPIs = (calls) => {
   const totalCost = calls.reduce((sum, c) => sum + Number(c.callCost), 0);
   const avgDuration =
     calls.reduce((sum, c) => sum + c.callDuration, 0) / totalCalls || 0;
-  const successfulCalls = calls.filter(c => c.callStatus).length;
-  const failedCalls = totalCalls - successfulCalls;
+  const successfulCalls = calls.filter(
+    c => c.callStatus === true
+  ).length;
 
+  const failedCalls = calls.filter(
+    c => c.callStatus === false
+  ).length;
   return {
     totalCalls,
     totalCost: totalCost.toFixed(2),
@@ -31,6 +35,40 @@ export function getCallDurationStats(calls) {
     { name: "Shortest Call", duration: shortest },
     { name: "Average Duration", duration: Number(average.toFixed(2)) }
   ];
+}
+
+export function getCallsPerDay(calls) {
+
+  if (!calls || calls.length === 0) return [];
+
+  const days = {
+    Sun: 0,
+    Mon: 0,
+    Tue: 0,
+    Wed: 0,
+    Thu: 0,
+    Fri: 0,
+    Sat: 0
+  };
+
+  calls.forEach(call => {
+
+    if (!call.callStartTime) return;
+
+    const date = new Date(call.callStartTime);
+    const day = date.toLocaleDateString("en-US", { weekday: "short" });
+
+    if (days.hasOwnProperty(day)) {
+      days[day] += 1;
+    }
+
+  });
+
+  return Object.keys(days).map(day => ({
+    day,
+    calls: days[day]
+  }));
+
 }
 
 export const getCallsPerHour = (calls) => {
