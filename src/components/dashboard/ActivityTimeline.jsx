@@ -15,7 +15,6 @@ export default function ActivityTimeline({ data = [], type = "hour" }) {
             dataKey={xKey}
             label={{ value: type === "day" ? "Day" : "Hour", 
               position: "insideBottom", 
-              offset: -0, 
               style: { fontSize: 16, fontWeight: 600}, offset: -15 }}
               tick={{ fontSize: 14 }}
           />

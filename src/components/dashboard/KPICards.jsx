@@ -1,4 +1,5 @@
-import { FiPhone, FiDollarSign, FiClock, FiCheckCircle, FiXCircle } from "react-icons/fi";
+import { FiPhone, FiClock, FiCheckCircle, FiXCircle } from "react-icons/fi";
+import { FaPoundSign } from "react-icons/fa";
 
 export default function KPICards({ kpis }) {
   const cards = [
@@ -10,8 +11,8 @@ export default function KPICards({ kpis }) {
     },
     {
       label: "Total Cost",
-      value: `$${kpis.totalCost}`,
-      icon: <FiDollarSign />,
+      value: `£${kpis.totalCost}`,
+      icon: <FaPoundSign />,
       color: "from-green-500 to-green-700",
     },
     {

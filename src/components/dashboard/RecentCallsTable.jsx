@@ -71,7 +71,7 @@ export default function RecentCallsTable({ calls = [] }) {
               <TableCell>{c.receiverNumber}</TableCell>
               <TableCell>{c.city}</TableCell>
               <TableCell>{c.callDuration}s</TableCell>
-              <TableCell>${c.callCost}</TableCell>
+              <TableCell>£{c.callCost}</TableCell>
               <TableCell>{new Date(c.callStartTime).toLocaleString()}</TableCell>
             </TableRow>
           ))}
